@@ -374,7 +374,7 @@ a principal component with these two variables having opposite signs.
 
 
 \begin{Verbatim}[commandchars=\\\{\}]
-{\color{outcolor}Out[{\color{outcolor}4}]:} <seaborn.axisgrid.PairGrid at 0x2afcc140588>
+{\color{outcolor}Out[{\color{outcolor}4}]:} <seaborn.axisgrid.PairGrid at 0x229bf443b70>
 \end{Verbatim}
             
     \begin{center}
@@ -400,7 +400,8 @@ onto this line has the largest variance.
                 \PY{k}{return} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{orange}\PY{l+s+s1}{\PYZsq{}}
             \PY{k}{else}\PY{p}{:}
                 \PY{k}{return} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{green}\PY{l+s+s1}{\PYZsq{}}
-            
+        
+        \PY{c+c1}{\PYZsh{} Create a color array to attach a color to each point depending on its label}
         \PY{n}{color} \PY{o}{=} \PY{n}{iris\PYZus{}data}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Class}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{o}{.}\PY{n}{apply}\PY{p}{(}\PY{n}{colorify}\PY{p}{)}
 \end{Verbatim}
 
@@ -411,7 +412,7 @@ onto this line has the largest variance.
 
 
 \begin{Verbatim}[commandchars=\\\{\}]
-{\color{outcolor}Out[{\color{outcolor}6}]:} <seaborn.axisgrid.JointGrid at 0x2afcfd130f0>
+{\color{outcolor}Out[{\color{outcolor}6}]:} <seaborn.axisgrid.JointGrid at 0x229c40a60f0>
 \end{Verbatim}
             
     \begin{center}
@@ -420,14 +421,621 @@ onto this line has the largest variance.
     { \hspace*{\fill} \\}
     
     Let there be \(p\) variables in our dataset with
-\(\bf{X} = (\bf{X_1},\bf{X_2},...,\bf{X_p})\) a column vector of random
-variables representing the variables of the dataset. A principal
-component, \(\bf{P}\), then has the form
+\(\bf{X} = (\bf{X_1},\bf{X_2},...,\bf{X_p})^T\) a column vector of
+random variables representing the variables of the dataset. A principal
+component, \(P_1\), then has the form
 
-\[\bf{P} = \alpha_{11} \bf{X_1} + \alpha_{12} \bf{X_2} + ... + \alpha_{1p} \bf{X_p} = \sum_i fd\]
+\[P_1 = \alpha_{11} \textbf{X}_1 + \alpha_{12} \textbf{X}_2 + ... + \alpha_{1p} \textbf{X}_p = \sum_{i=1}^p \alpha_{1i} \textbf{X}_i = (\alpha_{11},\alpha_{12},...,\alpha_{1p})\textbf{X} = \boldsymbol{\alpha}_{1}^T \textbf{X}\]
 
 Then the \emph{first principal component} is the linear combination of
-the variables which results in the greatest variance.
+the variables which results in the greatest variance. The variance of
+\(P_1\) can be calculated as
+
+\[Var[P_1] = \text{E}[\textbf{P}_1^2] - \text{E}[\textbf{P}_1]^2 = \boldsymbol{\alpha}_{1}^T \boldsymbol{\sum} \boldsymbol{\alpha}_{1}\]
+
+where \(\boldsymbol{\sum}\) is the \(p \times p\) covariance matrix of
+\(\textbf{X}\). This result is shown in Appendix A.1.
+
+Since \(P_1\), the \emph{first principal component}, is the principal
+component with the greatest variance, we will need to maximise
+\(Var[P_1]\) in terms of \(\alpha_i\). i.e.
+
+\[\max_{\alpha_i} P_1(\alpha_i,\boldsymbol{X})\]
+
+The initial point here is that \(P_1\) is just a linear combination of
+the variables, so nothing stops the unbounded variables, \(\alpha_i\)
+from going to infinity. We solve this issue by adding the constraint
+
+\[\sum_{i} \alpha_{1i}^2 = \boldsymbol{\alpha}_1^T \boldsymbol{\alpha}_1 =  1\]
+
+Given this bound, the coefficients will have to compete with each other
+to maximise \(P_1\). Note: A constraint of the form
+\(\sum_{i} \alpha_{1i} = 1\) is not sufficient as it doesn't solve the
+issue of unboundedness.
+
+To calculate \(Var(P_1)\), as it is currently written, we will need to
+know the covariance matrix \(\sum\). However, often we are dealing with
+samples and do not know the covariance matrix. An unbiased, Maximum
+Likelihood Estimator (MLE) for the covariance matrix of the data
+\(\boldsymbol{X}\) is
+
+\[\boldsymbol{S} = \frac{1}{n-1} \sum_{i=1}^n(\boldsymbol{x}_i - \hat{\boldsymbol{\mu}}) (\boldsymbol{x}_i - \hat{\boldsymbol{\mu}})^T\]
+
+where \(\boldsymbol{X}\) is a \(p \times n\) data matrix,
+\(\boldsymbol{x}_i\) is the \(p \times 1\) column vector for observation
+\(i\), and
+\(\hat{\boldsymbol{\mu}} = \frac{1}{n} \sum_{i=1}^n \boldsymbol{x}_i\)
+is the \(p \times 1\) unbiased MLE for the mean \(\boldsymbol{\mu}\)
+where \(\mu_i\) is the mean value of the ith parameter/variable.
+
+Sometimes \(\boldsymbol{S}\) is expressed as
+
+\[\boldsymbol{S} =  \frac{1}{n-1} \boldsymbol{X}^T \boldsymbol{X}\]
+
+where \(\boldsymbol{X}\) is already mean centered.
+
+We therefore need to maximise
+
+\[\boldsymbol{\alpha}_{1}^T \boldsymbol{S} \boldsymbol{\alpha}_{1}\]
+
+with the constraint
+
+\[\boldsymbol{\alpha}_1^T \boldsymbol{\alpha}_1 =  1\].
+
+We can do this via \emph{Lagrange Multipliers}. Let
+\(\mathcal{L}(\boldsymbol{\alpha_1},\lambda_1)\) be the Lagrange
+function defined by
+
+\[\mathcal{L}(\boldsymbol{\alpha}_1,\lambda_1) = f(\boldsymbol{\alpha}_1) - \lambda_1 g(\boldsymbol{\alpha}_1)\]
+
+where \(f(\boldsymbol{\alpha}_1)\) is the function to be
+maximised/minimised and \(g(\boldsymbol{\alpha}_1)\) is a constraint. We
+need to solve
+
+\(\nabla_{\boldsymbol{\alpha}_1,\lambda_1}\mathcal{L}(\boldsymbol{\alpha_1},\lambda_1) = 0\)
+which in turn implies solving
+\(\nabla_{\boldsymbol{\alpha}_1}f(\boldsymbol{\alpha}_1) = \lambda_1 \nabla_{\boldsymbol{\alpha}_1} g(\boldsymbol{\alpha}_1)\)
+and \(g(\boldsymbol{\alpha}_1) = 0\).
+
+In our particular case we have
+
+\[\mathcal{L}(\boldsymbol{\alpha}_1,\lambda_1) = \boldsymbol{\alpha}_{1}^T \boldsymbol{S} \boldsymbol{\alpha}_{1} - \lambda_1 (\boldsymbol{\alpha}_1^T \boldsymbol{\alpha}_1 - 1)\]
+
+Then
+
+\[\nabla \mathcal{L}(\boldsymbol{\alpha}_1,\lambda_1) = 2 \boldsymbol{S} \boldsymbol{\alpha}_1 - 2 \lambda_1 \boldsymbol{\alpha}_1 = 0\]
+
+Resulting in the eigenvalue equation
+
+\[\boldsymbol{S} \alpha_1 = \lambda_1 \boldsymbol{\alpha}_1 \implies \lambda_1 \text{is a solution to det}(\boldsymbol{S} - \lambda \boldsymbol{I}) = 0\]
+
+This has at most \(p\) roots. Since we're looking for the \(P_1\) which
+is the solution resulting in the largest variance, we choose the largest
+of these roots since \(\lambda_1\) is related to \(Var(P_1)\). This can
+be seen by multiplying the eigenvalue equation above on both sides by
+\(\boldsymbol{\alpha}_1\) to obtain \(Var(P_1)\)
+
+\[\boldsymbol{\alpha}_1^T \boldsymbol{S} \boldsymbol{\alpha}_1 = \lambda_1\]
+
+We first calculate \(\boldsymbol{S}\) for our dataset.
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}7}]:} \PY{k}{def} \PY{n+nf}{VectorScalarSubtract}\PY{p}{(}\PY{n}{u}\PY{p}{,}\PY{n}{v}\PY{p}{)}\PY{p}{:}
+            \PY{l+s+sd}{\PYZsq{}\PYZsq{}\PYZsq{}}
+        \PY{l+s+sd}{    Subtracts scalar v from vector u.}
+        \PY{l+s+sd}{    \PYZsq{}\PYZsq{}\PYZsq{}}
+            \PY{k}{return} \PY{n+nb}{len}\PY{p}{(}\PY{n}{u}\PY{p}{)}
+        
+        \PY{k}{def} \PY{n+nf}{VectorSubtract}\PY{p}{(}\PY{n}{u}\PY{p}{,}\PY{n}{v}\PY{p}{)}\PY{p}{:}
+            \PY{l+s+sd}{\PYZsq{}\PYZsq{}\PYZsq{}}
+        \PY{l+s+sd}{    Subtracts vector v from vector u.}
+        \PY{l+s+sd}{    Vectors must be of the same size.}
+        \PY{l+s+sd}{    \PYZsq{}\PYZsq{}\PYZsq{}}
+            \PY{n}{tempArray} \PY{o}{=} \PY{n}{u}\PY{o}{.}\PY{n}{loc}\PY{p}{[}\PY{p}{:}\PY{p}{]}
+            
+            \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n+nb}{len}\PY{p}{(}\PY{n}{u}\PY{p}{)}\PY{p}{)}\PY{p}{:}
+                \PY{n}{tempArray}\PY{p}{[}\PY{n}{i}\PY{p}{]} \PY{o}{=} \PY{n}{u}\PY{p}{[}\PY{n}{i}\PY{p}{]} \PY{o}{\PYZhy{}} \PY{n}{v}\PY{p}{[}\PY{n}{i}\PY{p}{]}
+            
+            \PY{k}{return} \PY{n}{tempArray}
+        
+        \PY{k}{def} \PY{n+nf}{MatrixScalarMult}\PY{p}{(}\PY{n}{X}\PY{p}{,}\PY{n}{s}\PY{p}{)}\PY{p}{:}
+            \PY{n}{rows} \PY{o}{=} \PY{n+nb}{len}\PY{p}{(}\PY{n}{X}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{)}
+            \PY{n}{cols} \PY{o}{=} \PY{n+nb}{len}\PY{p}{(}\PY{n}{X}\PY{p}{)}
+            \PY{n}{temp} \PY{o}{=} \PY{n}{X}
+            
+            \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n}{rows}\PY{p}{)}\PY{p}{:}
+                \PY{k}{for} \PY{n}{j} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n}{cols}\PY{p}{)}\PY{p}{:}
+                    \PY{n}{temp}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{[}\PY{n}{j}\PY{p}{]} \PY{o}{=} \PY{n}{X}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{[}\PY{n}{j}\PY{p}{]}\PY{o}{*}\PY{n}{s}
+                    
+            \PY{k}{return} \PY{n}{temp}
+        
+        \PY{k}{def} \PY{n+nf}{DotProduct}\PY{p}{(}\PY{n}{u}\PY{p}{,}\PY{n}{v}\PY{p}{)}\PY{p}{:}
+            \PY{n}{total} \PY{o}{=} \PY{l+m+mi}{0}
+            \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n+nb}{len}\PY{p}{(}\PY{n}{u}\PY{p}{)}\PY{p}{)}\PY{p}{:}
+                \PY{n}{total} \PY{o}{+}\PY{o}{=} \PY{n}{u}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{o}{*}\PY{n}{v}\PY{p}{[}\PY{n}{i}\PY{p}{]}
+                
+            \PY{k}{return} \PY{n}{total}
+        
+        \PY{k}{def} \PY{n+nf}{MultMatrix}\PY{p}{(}\PY{n}{X}\PY{p}{,}\PY{n}{Y}\PY{p}{)}\PY{p}{:}
+            \PY{n}{p} \PY{o}{=} \PY{n+nb}{len}\PY{p}{(}\PY{n}{X}\PY{p}{)}
+            \PY{n}{obs} \PY{o}{=} \PY{n+nb}{len}\PY{p}{(}\PY{n}{X}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{)}
+            \PY{n}{temparray} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+            \PY{n}{Z} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+            
+            \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n}{p}\PY{p}{)}\PY{p}{:}
+                \PY{n}{u} \PY{o}{=} \PY{n}{X}\PY{p}{[}\PY{n}{i}\PY{p}{]}
+                \PY{n}{temparray} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+                \PY{k}{for} \PY{n}{j} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n}{p}\PY{p}{)}\PY{p}{:}
+                    \PY{n}{v} \PY{o}{=} \PY{n}{Y}\PY{o}{.}\PY{n}{transpose}\PY{p}{(}\PY{p}{)}\PY{p}{[}\PY{n}{j}\PY{p}{]}
+                    \PY{n}{temparray}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{DotProduct}\PY{p}{(}\PY{n}{u}\PY{p}{,}\PY{n}{v}\PY{p}{)}\PY{p}{)}
+                
+                \PY{n}{Z}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{temparray}\PY{p}{)}
+                
+            \PY{k}{return} \PY{n}{Z}
+        
+        \PY{k}{def} \PY{n+nf}{CenterMatrix}\PY{p}{(}\PY{n}{X}\PY{p}{)}\PY{p}{:}
+            \PY{n}{obs} \PY{o}{=} \PY{n+nb}{len}\PY{p}{(}\PY{n}{X}\PY{o}{.}\PY{n}{iloc}\PY{p}{[}\PY{p}{:}\PY{p}{,}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{)}
+            \PY{n}{params} \PY{o}{=} \PY{n+nb}{len}\PY{p}{(}\PY{n}{X}\PY{o}{.}\PY{n}{columns}\PY{p}{)}
+            \PY{n}{tempArray} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+            
+            \PY{n}{mu} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+            \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n}{params}\PY{p}{)}\PY{p}{:}
+                \PY{n}{v} \PY{o}{=} \PY{n+nb}{sum}\PY{p}{(}\PY{n}{X}\PY{o}{.}\PY{n}{iloc}\PY{p}{[}\PY{p}{:}\PY{p}{,}\PY{n}{i}\PY{p}{]}\PY{p}{)}\PY{o}{/}\PY{n}{obs}
+                \PY{n}{mu}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{v}\PY{p}{)}
+                
+            \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n}{obs}\PY{p}{)}\PY{p}{:}
+                \PY{n}{a} \PY{o}{=} \PY{n}{X}\PY{o}{.}\PY{n}{iloc}\PY{p}{[}\PY{n}{i}\PY{p}{,}\PY{p}{:}\PY{p}{]}
+                \PY{n}{tempArray}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{VectorSubtract}\PY{p}{(}\PY{n}{a}\PY{p}{,}\PY{n}{mu}\PY{p}{)}\PY{p}{)}
+                
+            \PY{k}{return} \PY{n}{tempArray}
+                
+        \PY{k}{def} \PY{n+nf}{CalcCovarMatrix}\PY{p}{(}\PY{n}{X}\PY{p}{)}\PY{p}{:}
+            \PY{n}{obs} \PY{o}{=} \PY{n+nb}{len}\PY{p}{(}\PY{n}{X}\PY{o}{.}\PY{n}{iloc}\PY{p}{[}\PY{p}{:}\PY{p}{,}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{)}
+            
+            \PY{n}{M} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{array}\PY{p}{(}\PY{n}{CenterMatrix}\PY{p}{(}\PY{n}{X}\PY{p}{)}\PY{p}{)}
+            \PY{n}{MT} \PY{o}{=} \PY{n}{M}\PY{o}{.}\PY{n}{transpose}\PY{p}{(}\PY{p}{)}
+                
+            \PY{n}{Z} \PY{o}{=} \PY{n}{MultMatrix}\PY{p}{(}\PY{n}{MT}\PY{p}{,}\PY{n}{M}\PY{p}{)} 
+            
+            \PY{n}{Z} \PY{o}{=} \PY{n}{MatrixScalarMult}\PY{p}{(}\PY{n}{Z}\PY{p}{,}\PY{l+m+mi}{1}\PY{o}{/}\PY{p}{(}\PY{n}{obs}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{)}\PY{p}{)}
+            
+            \PY{k}{return} \PY{n}{Z}
+        
+        \PY{k}{def} \PY{n+nf}{Determinant}\PY{p}{(}\PY{n}{X}\PY{p}{)}\PY{p}{:}
+            \PY{n}{det} \PY{o}{=} \PY{l+m+mi}{0}
+            \PY{k}{if} \PY{n+nb}{len}\PY{p}{(}\PY{n}{X}\PY{p}{)} \PY{o}{==} \PY{l+m+mi}{2}\PY{p}{:}
+                \PY{k}{return} \PY{p}{(}\PY{n}{X}\PY{o}{.}\PY{n}{iloc}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{,}\PY{l+m+mi}{0}\PY{p}{]} \PY{o}{*} \PY{n}{X}\PY{o}{.}\PY{n}{iloc}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{,}\PY{l+m+mi}{1}\PY{p}{]}\PY{o}{\PYZhy{}} \PY{n}{X}\PY{o}{.}\PY{n}{iloc}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{,}\PY{l+m+mi}{1}\PY{p}{]} \PY{o}{*} \PY{n}{X}\PY{o}{.}\PY{n}{iloc}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{,}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{)}
+            \PY{k}{else}\PY{p}{:}
+                \PY{c+c1}{\PYZsh{} Go along the top row}
+                \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n+nb}{len}\PY{p}{(}\PY{n}{X}\PY{o}{.}\PY{n}{iloc}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{,}\PY{p}{:}\PY{p}{]}\PY{p}{)}\PY{p}{)}\PY{p}{:}
+                    \PY{c+c1}{\PYZsh{}print(GetSubMatrix(X,0,i))}
+                    \PY{c+c1}{\PYZsh{}print(Determinant(GetSubMatrix(X,0,i)))}
+                    
+                    \PY{n}{det} \PY{o}{+}\PY{o}{=} \PY{p}{(}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{)}\PY{o}{*}\PY{o}{*}\PY{n}{i} \PY{o}{*} \PY{n}{X}\PY{o}{.}\PY{n}{iloc}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{,}\PY{n}{i}\PY{p}{]} \PY{o}{*} \PY{n}{Determinant}\PY{p}{(}\PY{n}{GetSubMatrix}\PY{p}{(}\PY{n}{X}\PY{p}{,}\PY{l+m+mi}{0}\PY{p}{,}\PY{n}{i}\PY{p}{)}\PY{p}{)}
+                \PY{k}{return} \PY{n}{det}
+        
+        \PY{k}{def} \PY{n+nf}{MatrixSubtract}\PY{p}{(}\PY{n}{X}\PY{p}{,}\PY{n}{Y}\PY{p}{,}\PY{n}{dp}\PY{p}{)}\PY{p}{:}
+            \PY{n}{F} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{o}{.}\PY{n}{copy}\PY{p}{(}\PY{n}{X}\PY{p}{)}
+            \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n+nb}{len}\PY{p}{(}\PY{n}{C}\PY{p}{)}\PY{p}{)}\PY{p}{:}
+                \PY{k}{for} \PY{n}{j} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n+nb}{len}\PY{p}{(}\PY{n}{C}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{)}\PY{p}{)}\PY{p}{:}
+                    \PY{n}{F}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{[}\PY{n}{j}\PY{p}{]} \PY{o}{=} \PY{n+nb}{round}\PY{p}{(}\PY{n}{Z}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{[}\PY{n}{j}\PY{p}{]} \PY{o}{\PYZhy{}} \PY{n}{C}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{[}\PY{n}{j}\PY{p}{]}\PY{p}{,}\PY{n}{dp}\PY{p}{)}
+            
+            \PY{k}{return} \PY{n}{F}
+        
+        \PY{k}{def} \PY{n+nf}{GetSubMatrix}\PY{p}{(}\PY{n}{X}\PY{p}{,}\PY{n}{i}\PY{p}{,}\PY{n}{j}\PY{p}{)}\PY{p}{:}
+            \PY{n}{T} \PY{o}{=} \PY{n}{X}\PY{o}{.}\PY{n}{drop}\PY{p}{(}\PY{n}{X}\PY{o}{.}\PY{n}{columns}\PY{p}{[}\PY{n}{j}\PY{p}{]}\PY{p}{,}\PY{n}{axis}\PY{o}{=}\PY{l+m+mi}{1}\PY{p}{)}
+            \PY{n}{T} \PY{o}{=} \PY{n}{T}\PY{o}{.}\PY{n}{drop}\PY{p}{(}\PY{n}{T}\PY{o}{.}\PY{n}{index}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{,}\PY{n}{axis}\PY{o}{=}\PY{l+m+mi}{0}\PY{p}{)}
+            
+            \PY{k}{return} \PY{n}{T}
+        
+        \PY{k}{def} \PY{n+nf}{power\PYZus{}iteration}\PY{p}{(}\PY{n}{A}\PY{p}{,} \PY{n}{num\PYZus{}simulations}\PY{p}{)}\PY{p}{:}
+            \PY{c+c1}{\PYZsh{} Ideally choose a random vector}
+            \PY{c+c1}{\PYZsh{} To decrease the chance that our vector}
+            \PY{c+c1}{\PYZsh{} Is orthogonal to the eigenvector}
+            \PY{n}{b\PYZus{}k} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{random}\PY{o}{.}\PY{n}{rand}\PY{p}{(}\PY{n}{A}\PY{o}{.}\PY{n}{shape}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{)}
+            \PY{n}{l} \PY{o}{=} \PY{l+m+mi}{0}
+        
+            \PY{k}{for} \PY{n}{\PYZus{}} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n}{num\PYZus{}simulations}\PY{p}{)}\PY{p}{:}
+                \PY{c+c1}{\PYZsh{} calculate the matrix\PYZhy{}by\PYZhy{}vector product Ab}
+                \PY{n}{b\PYZus{}k1} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{dot}\PY{p}{(}\PY{n}{A}\PY{p}{,} \PY{n}{b\PYZus{}k}\PY{p}{)}
+        
+                \PY{c+c1}{\PYZsh{} calculate the norm}
+                \PY{n}{b\PYZus{}k1\PYZus{}norm} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{linalg}\PY{o}{.}\PY{n}{norm}\PY{p}{(}\PY{n}{b\PYZus{}k1}\PY{p}{)}
+        
+                \PY{c+c1}{\PYZsh{} re normalize the vector}
+                \PY{n}{b\PYZus{}k} \PY{o}{=} \PY{n}{b\PYZus{}k1} \PY{o}{/} \PY{n}{b\PYZus{}k1\PYZus{}norm}
+                
+            \PY{n}{l} \PY{o}{=} \PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{dot}\PY{p}{(}\PY{n}{b\PYZus{}k}\PY{o}{.}\PY{n}{transpose}\PY{p}{(}\PY{p}{)}\PY{p}{,}\PY{n}{np}\PY{o}{.}\PY{n}{dot}\PY{p}{(}\PY{n}{A}\PY{p}{,}\PY{n}{b\PYZus{}k}\PY{p}{)}\PY{p}{)}\PY{p}{)}\PY{o}{/}\PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{dot}\PY{p}{(}\PY{n}{b\PYZus{}k}\PY{o}{.}\PY{n}{transpose}\PY{p}{(}\PY{p}{)}\PY{p}{,}\PY{n}{b\PYZus{}k}\PY{p}{)}\PY{p}{)}
+        
+            \PY{k}{return} \PY{n}{b\PYZus{}k}\PY{p}{,}\PY{n}{l}
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}8}]:} \PY{c+c1}{\PYZsh{} The Iris dataset}
+        \PY{n}{X} \PY{o}{=} \PY{n}{iris\PYZus{}data}
+        
+        \PY{c+c1}{\PYZsh{} Calculate the covariance matrix for our dataset}
+        \PY{n}{Z} \PY{o}{=} \PY{n}{CalcCovarMatrix}\PY{p}{(}\PY{n}{X}\PY{p}{)}
+        \PY{n}{Z} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{n}{Z}\PY{p}{)}
+        
+        \PY{n}{Z}
+\end{Verbatim}
+
+
+\begin{Verbatim}[commandchars=\\\{\}]
+{\color{outcolor}Out[{\color{outcolor}8}]:}           0         1         2         3         4
+        0  0.685694 -0.039268  1.273682  0.516904  0.530872
+        1 -0.039268  0.188004 -0.321713 -0.117981 -0.148993
+        2  1.273682 -0.321713  3.113179  1.296387  1.371812
+        3  0.516904 -0.117981  1.296387  0.582414  0.597987
+        4  0.530872 -0.148993  1.371812  0.597987  0.671141
+\end{Verbatim}
+            
+    The calculation of the covariance matrix can also be done using numpy
+with the np.cov() method as follows (we see that we have the same
+result)
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}9}]:} \PY{n}{C} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{matrix}\PY{p}{(}\PY{n}{X}\PY{p}{)}\PY{o}{.}\PY{n}{transpose}\PY{p}{(}\PY{p}{)}
+        \PY{n}{C} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{cov}\PY{p}{(}\PY{n}{C}\PY{p}{)}\PY{p}{)}
+        \PY{n}{C}
+\end{Verbatim}
+
+
+\begin{Verbatim}[commandchars=\\\{\}]
+{\color{outcolor}Out[{\color{outcolor}9}]:}           0         1         2         3         4
+        0  0.685694 -0.039268  1.273682  0.516904  0.530872
+        1 -0.039268  0.188004 -0.321713 -0.117981 -0.148993
+        2  1.273682 -0.321713  3.113179  1.296387  1.371812
+        3  0.516904 -0.117981  1.296387  0.582414  0.597987
+        4  0.530872 -0.148993  1.371812  0.597987  0.671141
+\end{Verbatim}
+            
+    The eigenvector of the covariance matrix corresponding to the eigenvalue
+with the greatest magnitude can be iteratively calculated using the
+Power Iteration method (for now taken from wikipedia)
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}10}]:} \PY{n}{a\PYZus{}1}\PY{p}{,}\PY{n}{l\PYZus{}1} \PY{o}{=} \PY{n}{power\PYZus{}iteration}\PY{p}{(}\PY{n}{Z}\PY{p}{,} \PY{l+m+mi}{20}\PY{p}{)}
+\end{Verbatim}
+
+
+    The eigenvalue is
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}11}]:} \PY{n+nb}{print}\PY{p}{(}\PY{n}{l\PYZus{}1}\PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+4.835034736076369
+
+    \end{Verbatim}
+
+    And the corresponding eigenvector (for the \emph{first principal
+component}) is
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}12}]:} \PY{n}{a\PYZus{}1}
+\end{Verbatim}
+
+
+\begin{Verbatim}[commandchars=\\\{\}]
+{\color{outcolor}Out[{\color{outcolor}12}]:} array([ 0.33418606, -0.07826103,  0.80046289,  0.33708273,  0.35753221])
+\end{Verbatim}
+            
+    The eigenvalue, \(a_1\), and eigenvector, \(v\) are by definition a
+solution to the equation
+
+\[\boldsymbol{S} \boldsymbol{a}_1 = l_1 \boldsymbol{a}_1\]
+
+We can check that this is indeed true
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}44}]:} \PY{n}{np}\PY{o}{.}\PY{n}{subtract}\PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{dot}\PY{p}{(}\PY{n}{Z}\PY{p}{,}\PY{n}{a\PYZus{}1}\PY{p}{)}\PY{p}{,}\PY{n}{np}\PY{o}{.}\PY{n}{dot}\PY{p}{(}\PY{n}{l\PYZus{}1}\PY{p}{,}\PY{n}{a\PYZus{}1}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+
+
+\begin{Verbatim}[commandchars=\\\{\}]
+{\color{outcolor}Out[{\color{outcolor}44}]:} array([-4.44089210e-16,  5.55111512e-17, -4.44089210e-16, -4.44089210e-16,
+                 0.00000000e+00])
+\end{Verbatim}
+            
+    We now need to find the \emph{second principal component}
+
+\[P_2 = \boldsymbol{\alpha}_2^T \boldsymbol{X}\]
+
+However, the difference with what we did before is that the eigenvector
+for \(P_2\) has to be orthogonal to that for \(P_1\). i.e.
+
+\[\boldsymbol{\alpha}_1^T \boldsymbol{\alpha}_2 = 0\]
+
+This constraint along with the constraint analoguous to the previous
+case
+
+\[\boldsymbol{\alpha}_2^T \boldsymbol{\alpha}_2 = 1\]
+
+allows the discovery of an eigenvector that is different from
+\(\boldsymbol{\alpha}_1\)
+
+This results in the lagrange equation (maximising this corresponds to
+minimising \(\boldsymbol{\alpha}_1^T \boldsymbol{\alpha}_2\))
+
+\[\mathcal{L}(\boldsymbol{\alpha}_2,\lambda_2,r)=f(\boldsymbol{\alpha}_2) - \lambda_2 g(\boldsymbol{\alpha}_2) - r \boldsymbol{\alpha}_1^T \boldsymbol{\alpha}_2\]
+
+Resulting in
+
+\[\nabla \mathcal{L} = 2 \boldsymbol{S} \alpha_2 - 2 \lambda_2 \boldsymbol{\alpha}_2 - r \boldsymbol{\alpha}_1\]
+
+Setting this to 0
+
+\[\boldsymbol{S} \boldsymbol{\alpha}_2 - \lambda_2 \boldsymbol{\alpha}_2 = \frac{1}{2} r \boldsymbol{\alpha}_1\]
+
+multiplying both sides by \(\boldsymbol{\alpha}_1^T\)
+
+\[\boldsymbol{\alpha}_1^T \boldsymbol{S} \boldsymbol{\alpha}_2 - \lambda_2 \boldsymbol{\alpha}_1^T \boldsymbol{\alpha}_2 = \frac{1}{2} r \boldsymbol{\alpha}_1^T \boldsymbol{\alpha}_1\]
+
+\[\implies \boldsymbol{\alpha}_1^T \boldsymbol{S} \boldsymbol{\alpha}_2 = \frac{1}{2} r\]
+
+where \(\boldsymbol{\alpha}_1^T \boldsymbol{\alpha}_2 = 0\) and
+\(\boldsymbol{\alpha}_1^T \boldsymbol{\alpha}_1 = 1\)
+
+Remembering that
+
+\[\boldsymbol{S} \boldsymbol{\alpha}_1 = \lambda_1 \boldsymbol{\alpha}_1\]
+
+and multiplying both sides by \(\boldsymbol{\alpha}_2^T\)
+
+\[\boldsymbol{\alpha}_2^T \boldsymbol{S} \boldsymbol{\alpha}_1 = \lambda_1 \boldsymbol{\alpha}_2^T \boldsymbol{\alpha}_1 = 0\]
+
+This means that \(r=0\). Finally,
+
+\[\boldsymbol{S} \boldsymbol{\alpha}_2 = \lambda_2 \boldsymbol{\alpha}_2 \implies \boldsymbol{\alpha}_2^T \boldsymbol{S} \boldsymbol{\alpha}_2 = \lambda_2\]
+
+meaning that \(\lambda_2\) is related to the variance corresponding to
+the \emph{second principal component} and must be the second largets in
+magnitude.
+
+Here we can use the numpy.linalg module to calculate the eigenvalues for
+our covariance matrix.
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}14}]:} \PY{k+kn}{from} \PY{n+nn}{numpy} \PY{k}{import} \PY{n}{linalg} \PY{k}{as} \PY{n}{LA}
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}64}]:} \PY{n}{L}\PY{p}{,}\PY{n}{E} \PY{o}{=} \PY{n}{LA}\PY{o}{.}\PY{n}{eig}\PY{p}{(}\PY{n}{Z}\PY{p}{)}
+         \PY{n}{E} \PY{o}{=} \PY{n}{E}\PY{o}{.}\PY{n}{transpose}\PY{p}{(}\PY{p}{)}
+         \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Eigenvectors}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+         \PY{n+nb}{print}\PY{p}{(}\PY{n}{E}\PY{p}{)}
+         
+         \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Eigenvalues}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+         \PY{n+nb}{print}\PY{p}{(}\PY{n}{L}\PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Eigenvectors
+[[-0.33418606  0.07826103 -0.80046289 -0.33708273 -0.35753221]
+ [ 0.68858026  0.68410307 -0.09876295 -0.06819839 -0.2084588 ]
+ [ 0.44123572 -0.61107009  0.14879435 -0.4238525  -0.47970166]
+ [ 0.43143341 -0.30096245 -0.48845415 -0.07214371  0.69245552]
+ [-0.18262847  0.24878332  0.29795609 -0.83478653  0.34511928]]
+Eigenvalues
+[4.83503474 0.25208634 0.09589794 0.03668754 0.02072566]
+
+    \end{Verbatim}
+
+    In order to check that this is indeed the eigenvalue/eigenvector
+decomposition of \(Z\), we test the following equation
+
+\[\boldsymbol{E} \boldsymbol{Z} = \boldsymbol{\Lambda} \boldsymbol{E}^T\]
+
+where
+\(\boldsymbol{E} = (\boldsymbol{\alpha}_1,\boldsymbol{\alpha}_2,...,\boldsymbol{\alpha}_p)^T\)
+is the matrix of eigenvectors and \(\boldsymbol{\Lambda}\) is a diagonal
+matrix where \(\Lambda_{ii}\) is the \(i\)th eigenvalue.
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}56}]:} \PY{c+c1}{\PYZsh{} The diagonal matrix}
+         \PY{n}{LI} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{identity}\PY{p}{(}\PY{l+m+mi}{5}\PY{p}{)}
+         
+         \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{l+m+mi}{5}\PY{p}{)}\PY{p}{:}
+             \PY{n}{LI}\PY{p}{[}\PY{n}{i}\PY{p}{]} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{dot}\PY{p}{(}\PY{n}{LI}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{,}\PY{n}{L}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{)}
+         
+         \PY{n}{LI}
+\end{Verbatim}
+
+
+\begin{Verbatim}[commandchars=\\\{\}]
+{\color{outcolor}Out[{\color{outcolor}56}]:} array([[4.83503474, 0.        , 0.        , 0.        , 0.        ],
+                [0.        , 0.25208634, 0.        , 0.        , 0.        ],
+                [0.        , 0.        , 0.09589794, 0.        , 0.        ],
+                [0.        , 0.        , 0.        , 0.03668754, 0.        ],
+                [0.        , 0.        , 0.        , 0.        , 0.02072566]])
+\end{Verbatim}
+            
+    We can see below that we have approximate equality
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}67}]:} \PY{n+nb}{print}\PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{subtract}\PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{dot}\PY{p}{(}\PY{n}{E}\PY{p}{,}\PY{n}{Z}\PY{p}{)}\PY{p}{,}\PY{n}{np}\PY{o}{.}\PY{n}{dot}\PY{p}{(}\PY{n}{LI}\PY{p}{,}\PY{n}{E}\PY{p}{)}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+[[-2.22044605e-16 -6.10622664e-16 -8.88178420e-16 -2.22044605e-16
+  -1.11022302e-15]
+ [ 5.82867088e-16 -2.22044605e-16 -5.55111512e-17  1.45716772e-16
+  -1.24900090e-16]
+ [ 1.38777878e-17 -1.04083409e-16  2.61943245e-16  0.00000000e+00
+   1.52655666e-16]
+ [ 1.70002901e-16 -1.19695920e-16  5.06539255e-16  1.06251813e-16
+   1.28369537e-16]
+ [ 9.19403442e-17  3.64291930e-17  4.07660017e-17  4.85722573e-17
+   4.16333634e-17]]
+
+    \end{Verbatim}
+
+    The principal components are then as follows:
+
+\[P_1 = \alpha_{11} X_1 + \alpha_{12} X_2 + \alpha_{13} X_3 + \alpha_{14} X_4 + \alpha_{15} X_5\]
+\[P_2 = \alpha_{21} X_1 + \alpha_{22} X_2 + \alpha_{23} X_3 + \alpha_{24} X_4 + \alpha_{25} X_5\]
+\[P_3 = \alpha_{31} X_1 + \alpha_{32} X_2 + \alpha_{33} X_3 + \alpha_{34} X_4 + \alpha_{35} X_5\]
+\[P_4 = \alpha_{41} X_1 + \alpha_{42} X_2 + \alpha_{43} X_3 + \alpha_{44} X_4 + \alpha_{45} X_5\]
+\[P_5 = \alpha_{51} X_1 + \alpha_{52} X_2 + \alpha_{53} X_3 + \alpha_{54} X_4 + \alpha_{55} X_5\]
+
+This can be written concisely in matrix form as
+
+\[\boldsymbol{K}_{ij} = \sum_{l = 1}^5 X_{il} V_{lj}\]
+
+where
+\(\boldsymbol{V} = \boldsymbol{\alpha}^T = (\boldsymbol{\alpha}_1,\boldsymbol{\alpha}_2,...,\boldsymbol{\alpha}_5)\)
+and \(\boldsymbol{X}\) is the \(n \times p\) data matrix with \(n\)
+observations in \(p=5\) variables.
+
+\(\boldsymbol{K}\) is called the \emph{scores matrix} where \(K_{ij}\)
+is the value of the \(j\)th principal component of the \(i\)th
+observation and \(\boldsymbol{V}\) is the \emph{loadings matrix}.
+\(\boldsymbol{K}\) is the projections of the data onto the principal
+components. This means we can plot the columns of the scores matrix
+against each other to see how the principal components distinguish the
+data.
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}72}]:} \PY{n}{V} \PY{o}{=} \PY{n}{E}\PY{o}{.}\PY{n}{transpose}\PY{p}{(}\PY{p}{)}
+         \PY{n}{K} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{dot}\PY{p}{(}\PY{n}{X}\PY{p}{,}\PY{n}{V}\PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}85}]:} \PY{c+c1}{\PYZsh{} This is the first principal component for all 150 observations}
+         \PY{n}{K}\PY{p}{[}\PY{p}{:}\PY{p}{,}\PY{l+m+mi}{0}\PY{p}{]}
+\end{Verbatim}
+
+
+\begin{Verbatim}[commandchars=\\\{\}]
+{\color{outcolor}Out[{\color{outcolor}85}]:} array([-2.61849988, -2.59079318, -2.42825747, -2.56275755, -2.57725517,
+                -2.99500669, -2.49294122, -2.67295366, -2.43152626, -2.62930509,
+                -2.78314978, -2.68616274, -2.5236663 , -2.11643441, -2.65320702,
+                -2.89603942, -2.67482154, -2.65220815, -3.06938034, -2.70877613,
+                -2.96672066, -2.75031051, -2.12339559, -2.97541577, -2.92630161,
+                -2.78430436, -2.8204165 , -2.73196477, -2.65974459, -2.66839634,
+                -2.70964105, -2.87404463, -2.65129988, -2.69739158, -2.62930509,
+                -2.448467  , -2.67212801, -2.62930509, -2.34365386, -2.70637227,
+                -2.53874325, -2.46556346, -2.32800166, -2.88000694, -3.06266956,
+                -2.59108285, -2.75511415, -2.47488516, -2.74973117, -2.60073348,
+                -6.68049072, -6.35359478, -6.84869907, -5.65561427, -6.49836409,
+                -6.08355241, -6.50615093, -4.78582769, -6.45654005, -5.47771602,
+                -5.01064329, -5.9620151 , -5.72940858, -6.40320158, -5.3218911 ,
+                -6.34792214, -6.10189814, -5.70348714, -6.3650186 , -5.52591783,
+                -6.52776544, -5.81699539, -6.69514406, -6.34361114, -6.14956397,
+                -6.32232964, -6.72500421, -6.9371508 , -6.24339867, -5.19761691,
+                -5.42027904, -5.30652448, -5.61081111, -6.77303688, -6.03506093,
+                -6.23797643, -6.62176928, -6.24314827, -5.71429644, -5.63996206,
+                -5.91861284, -6.31532919, -5.6986835 , -4.8270724 , -5.81782104,
+                -5.79405306, -5.83558744, -6.08272676, -4.6384082 , -5.76336725,
+                -8.20765936, -7.16485671, -8.28360713, -7.6828207 , -8.03675748,
+                -9.01102418, -6.33204718, -8.57733078, -8.00789211, -8.56499479,
+                -7.3933647 , -7.52546092, -7.86316616, -7.10075229, -7.32557197,
+                -7.62116349, -7.66178552, -9.09558852, -9.38330261, -7.05594505,
+                -8.10844168, -6.96380909, -9.10643301, -7.13814888, -7.96636182,
+                -8.280295  , -7.01685788, -7.04783336, -7.82519023, -8.06843808,
+                -8.49219119, -8.85487032, -7.8588985 , -7.18929054, -7.50462871,
+                -8.71162789, -7.84593982, -7.62054081, -6.93436847, -7.80871237,
+                -8.00309256, -7.63599005, -7.16485671, -8.23511565, -8.10119491,
+                -7.65702523, -7.26755565, -7.4890632 , -7.61872037, -7.14108873])
+\end{Verbatim}
+            
+    By plotting a pair plot of the first and second principal components
+against each other, we can see that these principal components
+adequately segregate the data.
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}109}]:} \PY{c+c1}{\PYZsh{} Create a pairplot of each variable to identify if there is the class is easily distinguishable}
+          \PY{n}{sns}\PY{o}{.}\PY{n}{pairplot}\PY{p}{(}\PY{n}{data}\PY{o}{=}\PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{n}{K}\PY{p}{[}\PY{p}{:}\PY{p}{,}\PY{l+m+mi}{0}\PY{p}{:}\PY{l+m+mi}{2}\PY{p}{]}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+
+
+\begin{Verbatim}[commandchars=\\\{\}]
+{\color{outcolor}Out[{\color{outcolor}109}]:} <seaborn.axisgrid.PairGrid at 0x229cf9f5c88>
+\end{Verbatim}
+            
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_41_1.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    By producing and pairs plot we can find the components showing the most
+discrimination between the classes. Here we find that the first
+principal component (principal component 0 in the plot below) produces
+the most discrimination followed by the third principal component
+(principal component 2 in the plot below).
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}110}]:} \PY{c+c1}{\PYZsh{} Create a pairplot of each principal component to identify if the class is easily distinguishable}
+          \PY{n}{sns}\PY{o}{.}\PY{n}{pairplot}\PY{p}{(}\PY{n}{data}\PY{o}{=}\PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{n}{K}\PY{p}{[}\PY{p}{:}\PY{p}{,}\PY{p}{:}\PY{p}{]}\PY{p}{)}\PY{p}{,}\PY{n}{plot\PYZus{}kws}\PY{o}{=}\PY{n+nb}{dict}\PY{p}{(}\PY{p}{\PYZob{}}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{color}\PY{l+s+s1}{\PYZsq{}} \PY{p}{:} \PY{n}{color}\PY{p}{\PYZcb{}}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+
+
+\begin{Verbatim}[commandchars=\\\{\}]
+{\color{outcolor}Out[{\color{outcolor}110}]:} <seaborn.axisgrid.PairGrid at 0x229cfeabd30>
+\end{Verbatim}
+            
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_43_1.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}19}]:} \PY{k+kn}{from} \PY{n+nn}{sklearn}\PY{n+nn}{.}\PY{n+nn}{decomposition} \PY{k}{import} \PY{n}{PCA}
+         \PY{n}{pca} \PY{o}{=} \PY{n}{PCA}\PY{p}{(}\PY{n}{n\PYZus{}components}\PY{o}{=}\PY{l+m+mi}{5}\PY{p}{)}
+         \PY{n}{pca}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{n}{Z}\PY{p}{)}
+\end{Verbatim}
+
+
+\begin{Verbatim}[commandchars=\\\{\}]
+{\color{outcolor}Out[{\color{outcolor}19}]:} PCA(copy=True, iterated\_power='auto', n\_components=5, random\_state=None,
+           svd\_solver='auto', tol=0.0, whiten=False)
+\end{Verbatim}
+            
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}111}]:} \PY{n}{pca}\PY{o}{.}\PY{n}{components\PYZus{}}\PY{o}{.}\PY{n}{transpose}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+
+
+\begin{Verbatim}[commandchars=\\\{\}]
+{\color{outcolor}Out[{\color{outcolor}111}]:} array([[ 0.30772997,  0.79830468,  0.47271805,  0.07190551,  0.1984418 ],
+                 [-0.11986436,  0.42781019, -0.73444157, -0.3748819 ,  0.35024293],
+                 [ 0.80759875,  0.0083804 , -0.32507889, -0.06712611, -0.48737237],
+                 [ 0.33259464, -0.20655172, -0.22155939,  0.65710285,  0.60485078],
+                 [ 0.35791042, -0.37007328,  0.28699891, -0.64653158,  0.48432886]])
+\end{Verbatim}
+            
+    \subsubsection{A. Appendix}\label{a.-appendix}
+
+    \paragraph{A1. The Variance of a Linear Combination of Random
+Variables}\label{a1.-the-variance-of-a-linear-combination-of-random-variables}
+
+    Let
+\(\boldsymbol{X} = (\boldsymbol{X}_1,\boldsymbol{X}_2,...,\boldsymbol{X}_p)^T\)
+be a column vector of random variables,
+\(\boldsymbol{\alpha} = (\alpha_1, \alpha_2,..., \alpha_p)T\) be a
+column vector of constants (i.e. \(\in R^p\)) and
+\(P = \alpha_1 \boldsymbol{X}_1 + \alpha_2 \boldsymbol{X}_2 +...+\alpha_p \boldsymbol{X}_p = \sum_{i=1}^p \alpha_i \boldsymbol{X}_i\).
+Then
+
+\[\text{E}[P] = \text{E}[\sum_{i=1}^p \alpha_i \boldsymbol{X}_i] = \sum_{i=1}^p \alpha_i \text{E}[\boldsymbol{X}_i]\]
+\[(\text{E}[P])^2 = \sum_{i=1}^p \alpha_i \text{E}[\boldsymbol{X}_i] \sum_{i=1}^p \alpha_i \text{E}[\boldsymbol{X}_i] = \sum_{i=1}^p \alpha_i^2 \text{E}[\boldsymbol{X}_i]^2 + \sum_{i \neq j, i,j \in \{1,2,..,p\}}^p \alpha_i \alpha_j \text{E}[\boldsymbol{X}_i] \text{E}[\boldsymbol{X}_j]\]
+\[\text{E}[P^2] = \text{E}[(\sum_{i=1}^p \alpha_i \boldsymbol{X}_i)^2] = \text{E}[\sum_{i=1}^p \alpha_i^2 \boldsymbol{X}_i^2 + \sum_{i \neq j}^p \alpha_i \alpha_j \boldsymbol{X}_i \boldsymbol{X}_j] = \sum_{i=1}^p \alpha_i^2 \text{E}[\boldsymbol{X}_i^2] + \sum_{i \neq j}^p \alpha_i \alpha_j \text{E}[\boldsymbol{X}_i \boldsymbol{X}_j]\]
+
+Putting these together
+
+\[Var[P] = \text{E}[P^2] - \text{E}[P]^2 = \sum_{i=1}^p \alpha_i^2 (\text{E}[\boldsymbol{X}_i^2] - \text{E}[\boldsymbol{X}_i]^2) + \sum_{i \neq j}^p \alpha_i \alpha_j (\text{E}[\boldsymbol{X}_i \boldsymbol{X}_j] - \text{E}[\boldsymbol{X}_i] \text{E}[\boldsymbol{X}_j]) = \sum_{i=1}^p \alpha_i^2 Var[\boldsymbol{X}_i] + \sum_{i \neq j}^p \alpha_i \alpha_j Cov[\boldsymbol{X}_i,\boldsymbol{X}_j] = \sum_{i,j \in \{1,2,...,p\}} \alpha_i \alpha_j Cov[\boldsymbol{X}_i,\boldsymbol{X}_j] = \alpha^T \sum \alpha\]
+
+where \(\sum_{ij} = Cov(\boldsymbol{X}_i,\boldsymbol{X}_j)\) is the
+\(p \times p\) covariance matrix of \(\boldsymbol{X}\).
 
 
     % Add a bibliography block to the postdoc
