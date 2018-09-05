@@ -374,7 +374,7 @@ a principal component with these two variables having opposite signs.
 
 
 \begin{Verbatim}[commandchars=\\\{\}]
-{\color{outcolor}Out[{\color{outcolor}4}]:} <seaborn.axisgrid.PairGrid at 0x229bf443b70>
+{\color{outcolor}Out[{\color{outcolor}4}]:} <seaborn.axisgrid.PairGrid at 0x27e7e793eb8>
 \end{Verbatim}
             
     \begin{center}
@@ -412,7 +412,7 @@ onto this line has the largest variance.
 
 
 \begin{Verbatim}[commandchars=\\\{\}]
-{\color{outcolor}Out[{\color{outcolor}6}]:} <seaborn.axisgrid.JointGrid at 0x229c40a60f0>
+{\color{outcolor}Out[{\color{outcolor}6}]:} <seaborn.axisgrid.JointGrid at 0x27e0342a4e0>
 \end{Verbatim}
             
     \begin{center}
@@ -652,24 +652,23 @@ We first calculate \(\boldsymbol{S}\) for our dataset.
 
 
     \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}8}]:} \PY{c+c1}{\PYZsh{} The Iris dataset}
-        \PY{n}{X} \PY{o}{=} \PY{n}{iris\PYZus{}data}
-        
-        \PY{c+c1}{\PYZsh{} Calculate the covariance matrix for our dataset}
-        \PY{n}{Z} \PY{o}{=} \PY{n}{CalcCovarMatrix}\PY{p}{(}\PY{n}{X}\PY{p}{)}
-        \PY{n}{Z} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{n}{Z}\PY{p}{)}
-        
-        \PY{n}{Z}
+{\color{incolor}In [{\color{incolor}38}]:} \PY{c+c1}{\PYZsh{} The Iris dataset}
+         \PY{n}{X} \PY{o}{=} \PY{n}{iris\PYZus{}features}
+         
+         \PY{c+c1}{\PYZsh{} Calculate the covariance matrix for our dataset}
+         \PY{n}{Z} \PY{o}{=} \PY{n}{CalcCovarMatrix}\PY{p}{(}\PY{n}{X}\PY{p}{)}
+         \PY{n}{Z} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{n}{Z}\PY{p}{)}
+         
+         \PY{n}{Z}
 \end{Verbatim}
 
 
 \begin{Verbatim}[commandchars=\\\{\}]
-{\color{outcolor}Out[{\color{outcolor}8}]:}           0         1         2         3         4
-        0  0.685694 -0.039268  1.273682  0.516904  0.530872
-        1 -0.039268  0.188004 -0.321713 -0.117981 -0.148993
-        2  1.273682 -0.321713  3.113179  1.296387  1.371812
-        3  0.516904 -0.117981  1.296387  0.582414  0.597987
-        4  0.530872 -0.148993  1.371812  0.597987  0.671141
+{\color{outcolor}Out[{\color{outcolor}38}]:}           0         1         2         3
+         0  0.685694 -0.039268  1.273682  0.516904
+         1 -0.039268  0.188004 -0.321713 -0.117981
+         2  1.273682 -0.321713  3.113179  1.296387
+         3  0.516904 -0.117981  1.296387  0.582414
 \end{Verbatim}
             
     The calculation of the covariance matrix can also be done using numpy
@@ -677,19 +676,18 @@ with the np.cov() method as follows (we see that we have the same
 result)
 
     \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}9}]:} \PY{n}{C} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{matrix}\PY{p}{(}\PY{n}{X}\PY{p}{)}\PY{o}{.}\PY{n}{transpose}\PY{p}{(}\PY{p}{)}
-        \PY{n}{C} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{cov}\PY{p}{(}\PY{n}{C}\PY{p}{)}\PY{p}{)}
-        \PY{n}{C}
+{\color{incolor}In [{\color{incolor}39}]:} \PY{n}{C} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{matrix}\PY{p}{(}\PY{n}{X}\PY{p}{)}\PY{o}{.}\PY{n}{transpose}\PY{p}{(}\PY{p}{)}
+         \PY{n}{C} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{cov}\PY{p}{(}\PY{n}{C}\PY{p}{)}\PY{p}{)}
+         \PY{n}{C}
 \end{Verbatim}
 
 
 \begin{Verbatim}[commandchars=\\\{\}]
-{\color{outcolor}Out[{\color{outcolor}9}]:}           0         1         2         3         4
-        0  0.685694 -0.039268  1.273682  0.516904  0.530872
-        1 -0.039268  0.188004 -0.321713 -0.117981 -0.148993
-        2  1.273682 -0.321713  3.113179  1.296387  1.371812
-        3  0.516904 -0.117981  1.296387  0.582414  0.597987
-        4  0.530872 -0.148993  1.371812  0.597987  0.671141
+{\color{outcolor}Out[{\color{outcolor}39}]:}           0         1         2         3
+         0  0.685694 -0.039268  1.273682  0.516904
+         1 -0.039268  0.188004 -0.321713 -0.117981
+         2  1.273682 -0.321713  3.113179  1.296387
+         3  0.516904 -0.117981  1.296387  0.582414
 \end{Verbatim}
             
     The eigenvector of the covariance matrix corresponding to the eigenvalue
@@ -697,19 +695,19 @@ with the greatest magnitude can be iteratively calculated using the
 Power Iteration method (for now taken from wikipedia)
 
     \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}10}]:} \PY{n}{a\PYZus{}1}\PY{p}{,}\PY{n}{l\PYZus{}1} \PY{o}{=} \PY{n}{power\PYZus{}iteration}\PY{p}{(}\PY{n}{Z}\PY{p}{,} \PY{l+m+mi}{20}\PY{p}{)}
+{\color{incolor}In [{\color{incolor}40}]:} \PY{n}{a\PYZus{}1}\PY{p}{,}\PY{n}{l\PYZus{}1} \PY{o}{=} \PY{n}{power\PYZus{}iteration}\PY{p}{(}\PY{n}{Z}\PY{p}{,} \PY{l+m+mi}{20}\PY{p}{)}
 \end{Verbatim}
 
 
     The eigenvalue is
 
     \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}11}]:} \PY{n+nb}{print}\PY{p}{(}\PY{n}{l\PYZus{}1}\PY{p}{)}
+{\color{incolor}In [{\color{incolor}41}]:} \PY{n+nb}{print}\PY{p}{(}\PY{n}{l\PYZus{}1}\PY{p}{)}
 \end{Verbatim}
 
 
     \begin{Verbatim}[commandchars=\\\{\}]
-4.835034736076369
+4.224840768320114
 
     \end{Verbatim}
 
@@ -717,12 +715,12 @@ Power Iteration method (for now taken from wikipedia)
 component}) is
 
     \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}12}]:} \PY{n}{a\PYZus{}1}
+{\color{incolor}In [{\color{incolor}43}]:} \PY{n}{a\PYZus{}1}
 \end{Verbatim}
 
 
 \begin{Verbatim}[commandchars=\\\{\}]
-{\color{outcolor}Out[{\color{outcolor}12}]:} array([ 0.33418606, -0.07826103,  0.80046289,  0.33708273,  0.35753221])
+{\color{outcolor}Out[{\color{outcolor}43}]:} array([ 0.36158968, -0.08226889,  0.85657211,  0.35884393])
 \end{Verbatim}
             
     The eigenvalue, \(a_1\), and eigenvector, \(v\) are by definition a
@@ -738,8 +736,7 @@ We can check that this is indeed true
 
 
 \begin{Verbatim}[commandchars=\\\{\}]
-{\color{outcolor}Out[{\color{outcolor}44}]:} array([-4.44089210e-16,  5.55111512e-17, -4.44089210e-16, -4.44089210e-16,
-                 0.00000000e+00])
+{\color{outcolor}Out[{\color{outcolor}44}]:} array([0., 0., 0., 0.])
 \end{Verbatim}
             
     We now need to find the \emph{second principal component}
@@ -794,19 +791,19 @@ This means that \(r=0\). Finally,
 \[\boldsymbol{S} \boldsymbol{\alpha}_2 = \lambda_2 \boldsymbol{\alpha}_2 \implies \boldsymbol{\alpha}_2^T \boldsymbol{S} \boldsymbol{\alpha}_2 = \lambda_2\]
 
 meaning that \(\lambda_2\) is related to the variance corresponding to
-the \emph{second principal component} and must be the second largets in
+the \emph{second principal component} and must be the second largest in
 magnitude.
 
 Here we can use the numpy.linalg module to calculate the eigenvalues for
 our covariance matrix.
 
     \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}14}]:} \PY{k+kn}{from} \PY{n+nn}{numpy} \PY{k}{import} \PY{n}{linalg} \PY{k}{as} \PY{n}{LA}
+{\color{incolor}In [{\color{incolor}45}]:} \PY{k+kn}{from} \PY{n+nn}{numpy} \PY{k}{import} \PY{n}{linalg} \PY{k}{as} \PY{n}{LA}
 \end{Verbatim}
 
 
     \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}64}]:} \PY{n}{L}\PY{p}{,}\PY{n}{E} \PY{o}{=} \PY{n}{LA}\PY{o}{.}\PY{n}{eig}\PY{p}{(}\PY{n}{Z}\PY{p}{)}
+{\color{incolor}In [{\color{incolor}46}]:} \PY{n}{L}\PY{p}{,}\PY{n}{E} \PY{o}{=} \PY{n}{LA}\PY{o}{.}\PY{n}{eig}\PY{p}{(}\PY{n}{Z}\PY{p}{)}
          \PY{n}{E} \PY{o}{=} \PY{n}{E}\PY{o}{.}\PY{n}{transpose}\PY{p}{(}\PY{p}{)}
          \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Eigenvectors}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
          \PY{n+nb}{print}\PY{p}{(}\PY{n}{E}\PY{p}{)}
@@ -818,13 +815,12 @@ our covariance matrix.
 
     \begin{Verbatim}[commandchars=\\\{\}]
 Eigenvectors
-[[-0.33418606  0.07826103 -0.80046289 -0.33708273 -0.35753221]
- [ 0.68858026  0.68410307 -0.09876295 -0.06819839 -0.2084588 ]
- [ 0.44123572 -0.61107009  0.14879435 -0.4238525  -0.47970166]
- [ 0.43143341 -0.30096245 -0.48845415 -0.07214371  0.69245552]
- [-0.18262847  0.24878332  0.29795609 -0.83478653  0.34511928]]
+[[ 0.36158968 -0.08226889  0.85657211  0.35884393]
+ [-0.65653988 -0.72971237  0.1757674   0.07470647]
+ [-0.58099728  0.59641809  0.07252408  0.54906091]
+ [ 0.31725455 -0.32409435 -0.47971899  0.75112056]]
 Eigenvalues
-[4.83503474 0.25208634 0.09589794 0.03668754 0.02072566]
+[4.22484077 0.24224357 0.07852391 0.02368303]
 
     \end{Verbatim}
 
@@ -839,10 +835,10 @@ is the matrix of eigenvectors and \(\boldsymbol{\Lambda}\) is a diagonal
 matrix where \(\Lambda_{ii}\) is the \(i\)th eigenvalue.
 
     \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}56}]:} \PY{c+c1}{\PYZsh{} The diagonal matrix}
-         \PY{n}{LI} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{identity}\PY{p}{(}\PY{l+m+mi}{5}\PY{p}{)}
+{\color{incolor}In [{\color{incolor}47}]:} \PY{c+c1}{\PYZsh{} The diagonal matrix}
+         \PY{n}{LI} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{identity}\PY{p}{(}\PY{l+m+mi}{4}\PY{p}{)}
          
-         \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{l+m+mi}{5}\PY{p}{)}\PY{p}{:}
+         \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{l+m+mi}{4}\PY{p}{)}\PY{p}{:}
              \PY{n}{LI}\PY{p}{[}\PY{n}{i}\PY{p}{]} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{dot}\PY{p}{(}\PY{n}{LI}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{,}\PY{n}{L}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{)}
          
          \PY{n}{LI}
@@ -850,31 +846,24 @@ matrix where \(\Lambda_{ii}\) is the \(i\)th eigenvalue.
 
 
 \begin{Verbatim}[commandchars=\\\{\}]
-{\color{outcolor}Out[{\color{outcolor}56}]:} array([[4.83503474, 0.        , 0.        , 0.        , 0.        ],
-                [0.        , 0.25208634, 0.        , 0.        , 0.        ],
-                [0.        , 0.        , 0.09589794, 0.        , 0.        ],
-                [0.        , 0.        , 0.        , 0.03668754, 0.        ],
-                [0.        , 0.        , 0.        , 0.        , 0.02072566]])
+{\color{outcolor}Out[{\color{outcolor}47}]:} array([[4.22484077, 0.        , 0.        , 0.        ],
+                [0.        , 0.24224357, 0.        , 0.        ],
+                [0.        , 0.        , 0.07852391, 0.        ],
+                [0.        , 0.        , 0.        , 0.02368303]])
 \end{Verbatim}
             
     We can see below that we have approximate equality
 
     \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}67}]:} \PY{n+nb}{print}\PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{subtract}\PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{dot}\PY{p}{(}\PY{n}{E}\PY{p}{,}\PY{n}{Z}\PY{p}{)}\PY{p}{,}\PY{n}{np}\PY{o}{.}\PY{n}{dot}\PY{p}{(}\PY{n}{LI}\PY{p}{,}\PY{n}{E}\PY{p}{)}\PY{p}{)}\PY{p}{)}
+{\color{incolor}In [{\color{incolor}48}]:} \PY{n+nb}{print}\PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{subtract}\PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{dot}\PY{p}{(}\PY{n}{E}\PY{p}{,}\PY{n}{Z}\PY{p}{)}\PY{p}{,}\PY{n}{np}\PY{o}{.}\PY{n}{dot}\PY{p}{(}\PY{n}{LI}\PY{p}{,}\PY{n}{E}\PY{p}{)}\PY{p}{)}\PY{p}{)}
 \end{Verbatim}
 
 
     \begin{Verbatim}[commandchars=\\\{\}]
-[[-2.22044605e-16 -6.10622664e-16 -8.88178420e-16 -2.22044605e-16
-  -1.11022302e-15]
- [ 5.82867088e-16 -2.22044605e-16 -5.55111512e-17  1.45716772e-16
-  -1.24900090e-16]
- [ 1.38777878e-17 -1.04083409e-16  2.61943245e-16  0.00000000e+00
-   1.52655666e-16]
- [ 1.70002901e-16 -1.19695920e-16  5.06539255e-16  1.06251813e-16
-   1.28369537e-16]
- [ 9.19403442e-17  3.64291930e-17  4.07660017e-17  4.85722573e-17
-   4.16333634e-17]]
+[[-2.22044605e-16  8.32667268e-16  2.66453526e-15  6.66133815e-16]
+ [-4.71844785e-16  1.66533454e-16 -8.04911693e-16 -5.23886490e-16]
+ [-2.84494650e-16  1.59594560e-16 -4.47558657e-16 -9.71445147e-17]
+ [ 4.33680869e-18 -2.51534904e-17 -1.21430643e-16 -7.28583860e-17]]
 
     \end{Verbatim}
 
@@ -904,48 +893,48 @@ against each other to see how the principal components distinguish the
 data.
 
     \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}72}]:} \PY{n}{V} \PY{o}{=} \PY{n}{E}\PY{o}{.}\PY{n}{transpose}\PY{p}{(}\PY{p}{)}
+{\color{incolor}In [{\color{incolor}49}]:} \PY{n}{V} \PY{o}{=} \PY{n}{E}\PY{o}{.}\PY{n}{transpose}\PY{p}{(}\PY{p}{)}
          \PY{n}{K} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{dot}\PY{p}{(}\PY{n}{X}\PY{p}{,}\PY{n}{V}\PY{p}{)}
 \end{Verbatim}
 
 
     \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}85}]:} \PY{c+c1}{\PYZsh{} This is the first principal component for all 150 observations}
+{\color{incolor}In [{\color{incolor}50}]:} \PY{c+c1}{\PYZsh{} This is the first principal component for all 150 observations}
          \PY{n}{K}\PY{p}{[}\PY{p}{:}\PY{p}{,}\PY{l+m+mi}{0}\PY{p}{]}
 \end{Verbatim}
 
 
 \begin{Verbatim}[commandchars=\\\{\}]
-{\color{outcolor}Out[{\color{outcolor}85}]:} array([-2.61849988, -2.59079318, -2.42825747, -2.56275755, -2.57725517,
-                -2.99500669, -2.49294122, -2.67295366, -2.43152626, -2.62930509,
-                -2.78314978, -2.68616274, -2.5236663 , -2.11643441, -2.65320702,
-                -2.89603942, -2.67482154, -2.65220815, -3.06938034, -2.70877613,
-                -2.96672066, -2.75031051, -2.12339559, -2.97541577, -2.92630161,
-                -2.78430436, -2.8204165 , -2.73196477, -2.65974459, -2.66839634,
-                -2.70964105, -2.87404463, -2.65129988, -2.69739158, -2.62930509,
-                -2.448467  , -2.67212801, -2.62930509, -2.34365386, -2.70637227,
-                -2.53874325, -2.46556346, -2.32800166, -2.88000694, -3.06266956,
-                -2.59108285, -2.75511415, -2.47488516, -2.74973117, -2.60073348,
-                -6.68049072, -6.35359478, -6.84869907, -5.65561427, -6.49836409,
-                -6.08355241, -6.50615093, -4.78582769, -6.45654005, -5.47771602,
-                -5.01064329, -5.9620151 , -5.72940858, -6.40320158, -5.3218911 ,
-                -6.34792214, -6.10189814, -5.70348714, -6.3650186 , -5.52591783,
-                -6.52776544, -5.81699539, -6.69514406, -6.34361114, -6.14956397,
-                -6.32232964, -6.72500421, -6.9371508 , -6.24339867, -5.19761691,
-                -5.42027904, -5.30652448, -5.61081111, -6.77303688, -6.03506093,
-                -6.23797643, -6.62176928, -6.24314827, -5.71429644, -5.63996206,
-                -5.91861284, -6.31532919, -5.6986835 , -4.8270724 , -5.81782104,
-                -5.79405306, -5.83558744, -6.08272676, -4.6384082 , -5.76336725,
-                -8.20765936, -7.16485671, -8.28360713, -7.6828207 , -8.03675748,
-                -9.01102418, -6.33204718, -8.57733078, -8.00789211, -8.56499479,
-                -7.3933647 , -7.52546092, -7.86316616, -7.10075229, -7.32557197,
-                -7.62116349, -7.66178552, -9.09558852, -9.38330261, -7.05594505,
-                -8.10844168, -6.96380909, -9.10643301, -7.13814888, -7.96636182,
-                -8.280295  , -7.01685788, -7.04783336, -7.82519023, -8.06843808,
-                -8.49219119, -8.85487032, -7.8588985 , -7.18929054, -7.50462871,
-                -8.71162789, -7.84593982, -7.62054081, -6.93436847, -7.80871237,
-                -8.00309256, -7.63599005, -7.16485671, -8.23511565, -8.10119491,
-                -7.65702523, -7.26755565, -7.4890632 , -7.61872037, -7.14108873])
+{\color{outcolor}Out[{\color{outcolor}50}]:} array([-2.68420713, -2.71539062, -2.88981954, -2.7464372 , -2.72859298,
+                -2.27989736, -2.82089068, -2.62648199, -2.88795857, -2.67384469,
+                -2.50652679, -2.61314272, -2.78743398, -3.22520045, -2.64354322,
+                -2.38386932, -2.6225262 , -2.64832273, -2.19907796, -2.58734619,
+                -2.3105317 , -2.54323491, -3.21585769, -2.30312854, -2.35617109,
+                -2.50791723, -2.469056  , -2.56239095, -2.63982127, -2.63284791,
+                -2.58846205, -2.41007734, -2.64763667, -2.59715948, -2.67384469,
+                -2.86699985, -2.62522846, -2.67384469, -2.98184266, -2.59032303,
+                -2.77013891, -2.85221108, -2.99829644, -2.4055141 , -2.20883295,
+                -2.71566519, -2.53757337, -2.8403213 , -2.54268576, -2.70391231,
+                 1.28479459,  0.93241075,  1.46406132,  0.18096721,  1.08713449,
+                 0.64043675,  1.09522371, -0.75146714,  1.04329778, -0.01019007,
+                -0.5110862 ,  0.51109806,  0.26233576,  0.98404455, -0.174864  ,
+                 0.92757294,  0.65959279,  0.23454059,  0.94236171,  0.0432464 ,
+                 1.11624072,  0.35678657,  1.29646885,  0.92050265,  0.71400821,
+                 0.89964086,  1.33104142,  1.55739627,  0.81245555, -0.30733476,
+                -0.07034289, -0.19188449,  0.13499495,  1.37873698,  0.58727485,
+                 0.8072055 ,  1.22042897,  0.81286779,  0.24519516,  0.16451343,
+                 0.46303099,  0.89016045,  0.22887905, -0.70708128,  0.35553304,
+                 0.33112695,  0.37523823,  0.64169028, -0.90846333,  0.29780791,
+                 2.53172698,  1.41407223,  2.61648461,  1.97081495,  2.34975798,
+                 3.39687992,  0.51938325,  2.9320051 ,  2.31967279,  2.91813423,
+                 1.66193495,  1.80234045,  2.16537886,  1.34459422,  1.5852673 ,
+                 1.90474358,  1.94924878,  3.48876538,  3.79468686,  1.29832982,
+                 2.42816726,  1.19809737,  3.49926548,  1.38766825,  2.27585365,
+                 2.61419383,  1.25762518,  1.29066965,  2.12285398,  2.3875644 ,
+                 2.84096093,  3.2323429 ,  2.15873837,  1.4431026 ,  1.77964011,
+                 3.07652162,  2.14498686,  1.90486293,  1.16885347,  2.10765373,
+                 2.31430339,  1.92245088,  1.41407223,  2.56332271,  2.41939122,
+                 1.94401705,  1.52566363,  1.76404594,  1.90162908,  1.38966613])
 \end{Verbatim}
             
     By plotting a pair plot of the first and second principal components
@@ -953,13 +942,13 @@ against each other, we can see that these principal components
 adequately segregate the data.
 
     \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}109}]:} \PY{c+c1}{\PYZsh{} Create a pairplot of each variable to identify if there is the class is easily distinguishable}
-          \PY{n}{sns}\PY{o}{.}\PY{n}{pairplot}\PY{p}{(}\PY{n}{data}\PY{o}{=}\PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{n}{K}\PY{p}{[}\PY{p}{:}\PY{p}{,}\PY{l+m+mi}{0}\PY{p}{:}\PY{l+m+mi}{2}\PY{p}{]}\PY{p}{)}\PY{p}{)}
+{\color{incolor}In [{\color{incolor}51}]:} \PY{c+c1}{\PYZsh{} Create a pairplot of each variable to identify if there is the class is easily distinguishable}
+         \PY{n}{sns}\PY{o}{.}\PY{n}{pairplot}\PY{p}{(}\PY{n}{data}\PY{o}{=}\PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{n}{K}\PY{p}{[}\PY{p}{:}\PY{p}{,}\PY{l+m+mi}{0}\PY{p}{:}\PY{l+m+mi}{2}\PY{p}{]}\PY{p}{)}\PY{p}{)}
 \end{Verbatim}
 
 
 \begin{Verbatim}[commandchars=\\\{\}]
-{\color{outcolor}Out[{\color{outcolor}109}]:} <seaborn.axisgrid.PairGrid at 0x229cf9f5c88>
+{\color{outcolor}Out[{\color{outcolor}51}]:} <seaborn.axisgrid.PairGrid at 0x27e06c76828>
 \end{Verbatim}
             
     \begin{center}
@@ -974,13 +963,13 @@ the most discrimination followed by the third principal component
 (principal component 2 in the plot below).
 
     \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}110}]:} \PY{c+c1}{\PYZsh{} Create a pairplot of each principal component to identify if the class is easily distinguishable}
-          \PY{n}{sns}\PY{o}{.}\PY{n}{pairplot}\PY{p}{(}\PY{n}{data}\PY{o}{=}\PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{n}{K}\PY{p}{[}\PY{p}{:}\PY{p}{,}\PY{p}{:}\PY{p}{]}\PY{p}{)}\PY{p}{,}\PY{n}{plot\PYZus{}kws}\PY{o}{=}\PY{n+nb}{dict}\PY{p}{(}\PY{p}{\PYZob{}}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{color}\PY{l+s+s1}{\PYZsq{}} \PY{p}{:} \PY{n}{color}\PY{p}{\PYZcb{}}\PY{p}{)}\PY{p}{)}
+{\color{incolor}In [{\color{incolor}52}]:} \PY{c+c1}{\PYZsh{} Create a pairplot of each principal component to identify if the class is easily distinguishable}
+         \PY{n}{sns}\PY{o}{.}\PY{n}{pairplot}\PY{p}{(}\PY{n}{data}\PY{o}{=}\PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{n}{K}\PY{p}{[}\PY{p}{:}\PY{p}{,}\PY{p}{:}\PY{p}{]}\PY{p}{)}\PY{p}{,}\PY{n}{plot\PYZus{}kws}\PY{o}{=}\PY{n+nb}{dict}\PY{p}{(}\PY{p}{\PYZob{}}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{color}\PY{l+s+s1}{\PYZsq{}} \PY{p}{:} \PY{n}{color}\PY{p}{\PYZcb{}}\PY{p}{)}\PY{p}{)}
 \end{Verbatim}
 
 
 \begin{Verbatim}[commandchars=\\\{\}]
-{\color{outcolor}Out[{\color{outcolor}110}]:} <seaborn.axisgrid.PairGrid at 0x229cfeabd30>
+{\color{outcolor}Out[{\color{outcolor}52}]:} <seaborn.axisgrid.PairGrid at 0x27e06a1c4a8>
 \end{Verbatim}
             
     \begin{center}
@@ -989,28 +978,169 @@ the most discrimination followed by the third principal component
     { \hspace*{\fill} \\}
     
     \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}19}]:} \PY{k+kn}{from} \PY{n+nn}{sklearn}\PY{n+nn}{.}\PY{n+nn}{decomposition} \PY{k}{import} \PY{n}{PCA}
-         \PY{n}{pca} \PY{o}{=} \PY{n}{PCA}\PY{p}{(}\PY{n}{n\PYZus{}components}\PY{o}{=}\PY{l+m+mi}{5}\PY{p}{)}
-         \PY{n}{pca}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{n}{Z}\PY{p}{)}
+{\color{incolor}In [{\color{incolor}53}]:} \PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{n}{V}\PY{p}{,}\PY{n}{columns}\PY{o}{=}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{PC1}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{PC2}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{PC3}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{PC4}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,}\PY{n}{index}\PY{o}{=}\PY{n}{iris\PYZus{}data}\PY{o}{.}\PY{n}{columns}\PY{p}{[}\PY{p}{:}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{)}
 \end{Verbatim}
 
 
 \begin{Verbatim}[commandchars=\\\{\}]
-{\color{outcolor}Out[{\color{outcolor}19}]:} PCA(copy=True, iterated\_power='auto', n\_components=5, random\_state=None,
+{\color{outcolor}Out[{\color{outcolor}53}]:}                         PC1       PC2       PC3       PC4
+         sepal length (cm)  0.361590 -0.656540 -0.580997  0.317255
+         sepal width (cm)  -0.082269 -0.729712  0.596418 -0.324094
+         petal length (cm)  0.856572  0.175767  0.072524 -0.479719
+         petal width (cm)   0.358844  0.074706  0.549061  0.751121
+\end{Verbatim}
+            
+    The principal components derived using the covariance matrix may give
+rise to domination of a feature over others. An approach to negate the
+effects of differing magnitudes amongst features is to use the
+correlation matrix instead. The relationship between the covariance
+matrix and the correlation matrix of \(\boldsymbol{X}\) is
+
+\[cor(X_i,X_j) = \frac{cov(X_i,X_j)}{\sqrt{cov(X_i,X_i)cov(X_j,X_j)}}\]
+
+where \(cov(X_i,X_i) = var(X_i)\)
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}82}]:} \PY{n}{C} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{matrix}\PY{p}{(}\PY{n}{X}\PY{p}{)}\PY{o}{.}\PY{n}{transpose}\PY{p}{(}\PY{p}{)}
+         \PY{n}{C} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{corrcoef}\PY{p}{(}\PY{n}{C}\PY{p}{)}\PY{p}{)}
+         \PY{n}{C} 
+         
+         \PY{n}{L}\PY{p}{,}\PY{n}{E} \PY{o}{=} \PY{n}{LA}\PY{o}{.}\PY{n}{eig}\PY{p}{(}\PY{n}{C}\PY{p}{)}
+         \PY{n}{E} \PY{o}{=} \PY{n}{E}\PY{o}{.}\PY{n}{transpose}\PY{p}{(}\PY{p}{)}
+         \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Eigenvectors}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+         \PY{n+nb}{print}\PY{p}{(}\PY{n}{E}\PY{p}{)}
+         
+         \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Eigenvalues}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+         \PY{n+nb}{print}\PY{p}{(}\PY{n}{L}\PY{p}{)}
+         
+         \PY{c+c1}{\PYZsh{} The diagonal matrix}
+         \PY{n}{LI} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{identity}\PY{p}{(}\PY{l+m+mi}{4}\PY{p}{)}
+         
+         \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{l+m+mi}{4}\PY{p}{)}\PY{p}{:}
+             \PY{n}{LI}\PY{p}{[}\PY{n}{i}\PY{p}{]} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{dot}\PY{p}{(}\PY{n}{LI}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{,}\PY{n}{L}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{)}
+         
+         \PY{n+nb}{print}\PY{p}{(}\PY{n}{LI}\PY{p}{)}
+         
+         \PY{n}{V} \PY{o}{=} \PY{n}{E}\PY{o}{.}\PY{n}{transpose}\PY{p}{(}\PY{p}{)}
+         \PY{n}{K} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{dot}\PY{p}{(}\PY{n}{X}\PY{p}{,}\PY{n}{V}\PY{p}{)}
+         
+         \PY{c+c1}{\PYZsh{} Create a pairplot of each principal component to identify if the class is easily distinguishable}
+         \PY{n}{sns}\PY{o}{.}\PY{n}{pairplot}\PY{p}{(}\PY{n}{data}\PY{o}{=}\PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{n}{K}\PY{p}{[}\PY{p}{:}\PY{p}{,}\PY{p}{:}\PY{p}{]}\PY{p}{)}\PY{p}{,}\PY{n}{plot\PYZus{}kws}\PY{o}{=}\PY{n+nb}{dict}\PY{p}{(}\PY{p}{\PYZob{}}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{color}\PY{l+s+s1}{\PYZsq{}} \PY{p}{:} \PY{n}{color}\PY{p}{\PYZcb{}}\PY{p}{)}\PY{p}{)}
+         
+         \PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{n}{V}\PY{p}{,}\PY{n}{columns}\PY{o}{=}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{PC1}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{PC2}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{PC3}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{PC4}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,}\PY{n}{index}\PY{o}{=}\PY{n}{iris\PYZus{}data}\PY{o}{.}\PY{n}{columns}\PY{p}{[}\PY{p}{:}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Eigenvectors
+[[ 0.52237162 -0.26335492  0.58125401  0.56561105]
+ [-0.37231836 -0.92555649 -0.02109478 -0.06541577]
+ [-0.72101681  0.24203288  0.14089226  0.6338014 ]
+ [ 0.26199559 -0.12413481 -0.80115427  0.52354627]]
+Eigenvalues
+[2.91081808 0.92122093 0.14735328 0.02060771]
+[[2.91081808 0.         0.         0.        ]
+ [0.         0.92122093 0.         0.        ]
+ [0.         0.         0.14735328 0.        ]
+ [0.         0.         0.         0.02060771]]
+
+    \end{Verbatim}
+
+\begin{Verbatim}[commandchars=\\\{\}]
+{\color{outcolor}Out[{\color{outcolor}82}]:}                         PC1       PC2       PC3       PC4
+         sepal length (cm)  0.522372 -0.372318 -0.721017  0.261996
+         sepal width (cm)  -0.263355 -0.925556  0.242033 -0.124135
+         petal length (cm)  0.581254 -0.021095  0.140892 -0.801154
+         petal width (cm)   0.565611 -0.065416  0.633801  0.523546
+\end{Verbatim}
+            
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_46_2.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    From the pair plot above, we see that principal components 1 and 4,
+discriminate between the classes most. Looking at the principal
+component dataframe above, shows that these two components have a
+significant contribution from petal length and petal width. This is not
+surprising since in our initial pair plot, these two features showed the
+most discrimination.
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}71}]:} \PY{k+kn}{from} \PY{n+nn}{sklearn}\PY{n+nn}{.}\PY{n+nn}{decomposition} \PY{k}{import} \PY{n}{PCA}
+         \PY{n}{pca} \PY{o}{=} \PY{n}{PCA}\PY{p}{(}\PY{n}{n\PYZus{}components}\PY{o}{=}\PY{l+m+mi}{4}\PY{p}{)}
+         \PY{n}{pca}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{n}{X}\PY{p}{)}
+\end{Verbatim}
+
+
+\begin{Verbatim}[commandchars=\\\{\}]
+{\color{outcolor}Out[{\color{outcolor}71}]:} PCA(copy=True, iterated\_power='auto', n\_components=4, random\_state=None,
            svd\_solver='auto', tol=0.0, whiten=False)
 \end{Verbatim}
             
     \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}111}]:} \PY{n}{pca}\PY{o}{.}\PY{n}{components\PYZus{}}\PY{o}{.}\PY{n}{transpose}\PY{p}{(}\PY{p}{)}
+{\color{incolor}In [{\color{incolor}72}]:} \PY{n}{pca}\PY{o}{.}\PY{n}{components\PYZus{}}\PY{o}{.}\PY{n}{transpose}\PY{p}{(}\PY{p}{)}
 \end{Verbatim}
 
 
 \begin{Verbatim}[commandchars=\\\{\}]
-{\color{outcolor}Out[{\color{outcolor}111}]:} array([[ 0.30772997,  0.79830468,  0.47271805,  0.07190551,  0.1984418 ],
-                 [-0.11986436,  0.42781019, -0.73444157, -0.3748819 ,  0.35024293],
-                 [ 0.80759875,  0.0083804 , -0.32507889, -0.06712611, -0.48737237],
-                 [ 0.33259464, -0.20655172, -0.22155939,  0.65710285,  0.60485078],
-                 [ 0.35791042, -0.37007328,  0.28699891, -0.64653158,  0.48432886]])
+{\color{outcolor}Out[{\color{outcolor}72}]:} array([[ 0.36158968,  0.65653988, -0.58099728,  0.31725455],
+                [-0.08226889,  0.72971237,  0.59641809, -0.32409435],
+                [ 0.85657211, -0.1757674 ,  0.07252408, -0.47971899],
+                [ 0.35884393, -0.07470647,  0.54906091,  0.75112056]])
+\end{Verbatim}
+            
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}73}]:} \PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{n}{pca}\PY{o}{.}\PY{n}{components\PYZus{}}\PY{o}{.}\PY{n}{transpose}\PY{p}{(}\PY{p}{)}\PY{p}{,}\PY{n}{columns}\PY{o}{=}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{PC1}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{PC2}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{PC3}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{PC4}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,}\PY{n}{index}\PY{o}{=}\PY{n}{iris\PYZus{}data}\PY{o}{.}\PY{n}{columns}\PY{p}{[}\PY{p}{:}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{)}
+\end{Verbatim}
+
+
+\begin{Verbatim}[commandchars=\\\{\}]
+{\color{outcolor}Out[{\color{outcolor}73}]:}                         PC1       PC2       PC3       PC4
+         sepal length (cm)  0.361590  0.656540 -0.580997  0.317255
+         sepal width (cm)  -0.082269  0.729712  0.596418 -0.324094
+         petal length (cm)  0.856572 -0.175767  0.072524 -0.479719
+         petal width (cm)   0.358844 -0.074706  0.549061  0.751121
+\end{Verbatim}
+            
+    The principal components obtained using sklearn.decomposition.PCA
+matches our results. Note that if \(\boldsymbol{\alpha}\) is a vector
+satisfying
+\(\boldsymbol{X} \boldsymbol{\alpha} = \lambda \boldsymbol{\alpha}\) for
+some \(\lambda\), then the following is also true:
+
+\[\boldsymbol{X} (-\boldsymbol{\alpha}) = \lambda (-\boldsymbol{\alpha})\]
+
+Hence, if \(\boldsymbol{\alpha}\) is an eigenvector, so is
+\(-\boldsymbol{\alpha}\). Additionally, if \(\boldsymbol{\alpha}\) and
+\(\boldsymbol{\beta}\) are two orthonormal vectors, then so are
+\(-\boldsymbol{\alpha}\) and \(\boldsymbol{\beta}\). This explains why
+some of the principal vectors obtained via sklearn.decomposition.PCA
+differs from ours only by sign.
+
+Below, we see that after fitting the PCA method, it is possible to
+retrieve the covariance matrix which matches ours.
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}81}]:} \PY{n+nb}{print}\PY{p}{(}\PY{n}{pca}\PY{o}{.}\PY{n}{get\PYZus{}covariance}\PY{p}{(}\PY{p}{)}\PY{p}{)}
+         \PY{n}{Z}
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+[[ 0.68569351 -0.03926846  1.27368233  0.5169038 ]
+ [-0.03926846  0.18800403 -0.32171275 -0.11798121]
+ [ 1.27368233 -0.32171275  3.11317942  1.29638747]
+ [ 0.5169038  -0.11798121  1.29638747  0.58241432]]
+
+    \end{Verbatim}
+
+\begin{Verbatim}[commandchars=\\\{\}]
+{\color{outcolor}Out[{\color{outcolor}81}]:}           0         1         2         3
+         0  0.685694 -0.039268  1.273682  0.516904
+         1 -0.039268  0.188004 -0.321713 -0.117981
+         2  1.273682 -0.321713  3.113179  1.296387
+         3  0.516904 -0.117981  1.296387  0.582414
 \end{Verbatim}
             
     \subsubsection{A. Appendix}\label{a.-appendix}
